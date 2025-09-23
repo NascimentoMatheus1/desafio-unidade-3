@@ -1,7 +1,8 @@
-const categorias = require('./controllers/categorias');
+const usuarios = require('./controllers/usuarios');
 const express = require('express');
 const rotas = express();
 
-rotas.get('/', categorias.listar);
+rotas.get('/', usuarios.listar);
+rotas.post('/usuarios', usuarios.cadastrar);
 
 module.exports = rotas;
