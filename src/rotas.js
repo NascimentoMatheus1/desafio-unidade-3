@@ -9,5 +9,6 @@ rotas.post('/login', usuarios.login);
 rotas.use(verificarUsuarioLogado);
 
 rotas.get('/usuario', usuarios.listarUsuario);
+rotas.put('/usuario', usuarios.atualizar);
 
 module.exports = rotas;
