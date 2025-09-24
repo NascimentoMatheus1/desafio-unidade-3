@@ -3,8 +3,8 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const senhaJWT = require('../senhaJWT');
 
-const listar = (req, res) => {
-    return res.json('lista de usuarios...');
+const listarUsuario = (req, res) => {
+    return res.json(req.usuario);
 }
 
 const cadastrar = async (req, res) => {
@@ -79,7 +79,7 @@ const login = async (req, res) => {
 }
 
 module.exports = {
-    listar,
+    listarUsuario,
     cadastrar,
     login
 }
