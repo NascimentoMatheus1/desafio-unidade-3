@@ -34,7 +34,9 @@ const cadastrar = async (req, res) => {
             return res.status(400).json({ mensagem: "Tipo de categoria inválido!"});
         }
 
-        const { rowCount } = await pool.query(`SELECT * FROM categorias WHERE id = $1`, [categoria_id]);
+        const { rowCount } = await pool.query(`
+            SELECT * FROM categorias WHERE id = $1`
+            , [categoria_id]);
 
         if(rowCount === 0){
             return res.status(404).json({ mensagem: "Categoria não encontrada!"});
@@ -53,7 +55,60 @@ const cadastrar = async (req, res) => {
     }
 }
 
+const atualizar = async (req, res) => {
+    try{
+        const { 
+            descricao, 
+            valor, 
+            data, 
+            categoria_id, 
+            tipo 
+        } = req.body;
+
+        const camposValidos = isCamposValidos(descricao, valor, data, categoria_id, tipo);
+
+        if(!camposValidos){
+            return res.status(400).json({ mensagem: "Todos os campos obrigatórios devem ser informados."});
+        }
+
+        if(tipo !== 'entrada' && tipo !== 'saida'){
+            return res.status(400).json({ mensagem: "Tipo de categoria inválido!"});
+        }
+
+        const { id: id_transacao } = req.params;
+
+        const { rows, rowCount } = await pool.query(`
+            SELECT * FROM transacoes WHERE id = $1`
+            , [id_transacao]);
+
+        if(rowCount === 0){
+            return res.status(404).json({ mensagem: "transação não encontrada!"});
+        }
+
+        if(rows[0].usuario_id !== req.usuario.id){
+            return res.status(401).json({ mensagem: "Não autorizado!"});
+        }
+
+        await pool.query(`
+            UPDATE transacoes SET 
+            descricao = $1, 
+            valor = $2, 
+            data = $3, 
+            categoria_id = $4,
+            tipo = $5
+            WHERE id = $6`
+            , [descricao, valor, data, categoria_id, tipo, id_transacao]);
+
+        return res.status(204).json();
+
+    }catch(error){
+        console.log(error.message);
+        return res.status(500).json({ mensagem: 'Falha no servidor!'});
+    }
+}
+
 module.exports = {
     listar,
     cadastrar,
+    atualizar,
 }
