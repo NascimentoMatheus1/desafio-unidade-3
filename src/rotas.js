@@ -1,6 +1,7 @@
 const { verificarUsuarioLogado } = require('./middlewares/autenticacao');
 const usuarios = require('./controllers/usuarios');
 const categorias = require('./controllers/categorias');
+const transacoes = require('./controllers/transacoes');
 const express = require('express');
 const rotas = express();
 
@@ -12,5 +13,6 @@ rotas.use(verificarUsuarioLogado);
 rotas.get('/usuario', usuarios.listar);
 rotas.put('/usuario', usuarios.atualizar);
 rotas.get('/categorias', categorias.listar);
+rotas.post('/transacao', transacoes.cadastrar);
 
 module.exports = rotas;
