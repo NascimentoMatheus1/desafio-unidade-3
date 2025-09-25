@@ -9,7 +9,6 @@ CREATE TABLE usuarios (
 
 CREATE TABLE categorias (
     id SERIAL PRIMARY KEY,
-    usuario_id INTEGER references usuarios(id),
     descricao TEXT
 );
 
@@ -22,3 +21,22 @@ CREATE TABLE transacoes (
     usuario_id INTEGER references usuarios(id),
     tipo TEXT
 );
+
+INSERT INTO categorias (descricao) VALUES 
+  ('Alimentação'), 
+  ('Assinaturas e Serviços'),
+  ('Casa'),
+  ('Mercado'),
+  ('Cuidados Pessoais'),
+  ('Educação'),
+  ('Família'),
+  ('Lazer'),
+  ('Pets'),
+  ('Presentes'),
+  ('Roupas'),
+  ('Saúde'),
+  ('Transporte'),
+  ('Salário'),
+  ('Vendas'),
+  ('Outras receitas'),
+  ('Outras despesas');
