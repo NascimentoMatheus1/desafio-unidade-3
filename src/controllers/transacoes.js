@@ -1,6 +1,19 @@
 const pool = require('../conexao');
 const { isCamposValidos } = require('./validarCamposObrigatorios');
 
+const listar = async (req, res) => {
+    try{
+        const {  rows } = await pool.query(`
+            SELECT * FROM transacoes WHERE usuario_id = $1`
+            ,[req.usuario.id]);
+        
+        res.status(200).json(rows);
+    }catch(error){
+        console.log(error.message);
+        return res.status(500).json({ mensagem: 'Falha no servidor!'});
+    }
+}
+
 const cadastrar = async (req, res) => {
     try{
         const { 
@@ -41,5 +54,6 @@ const cadastrar = async (req, res) => {
 }
 
 module.exports = {
+    listar,
     cadastrar,
 }

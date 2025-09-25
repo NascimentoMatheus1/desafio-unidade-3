@@ -13,6 +13,7 @@ rotas.use(verificarUsuarioLogado);
 rotas.get('/usuario', usuarios.listar);
 rotas.put('/usuario', usuarios.atualizar);
 rotas.get('/categorias', categorias.listar);
+rotas.get('/transacao', transacoes.listar);
 rotas.post('/transacao', transacoes.cadastrar);
 
 module.exports = rotas;
