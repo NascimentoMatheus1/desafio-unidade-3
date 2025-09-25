@@ -2,6 +2,7 @@ const pool = require('../conexao');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const senhaJWT = require('../senhaJWT');
+const { isCamposValidos } = require('./validarCamposObrigatorios');
 
 const listar = (req, res) => {
     return res.json(req.usuario);
@@ -11,14 +12,10 @@ const cadastrar = async (req, res) => {
     try{
         const { nome, email, senha } = req.body;
 
-        if(!nome){
-            return res.status(400).json({ mensagem: 'informe o nome para o cadastro!'});
-        }
-        if(!email){
-            return res.status(400).json({ mensagem: 'informe o email para o cadastro!'});
-        }
-        if(!senha){
-            return res.status(400).json({ mensagem: 'informe a senha para o cadastro!'});
+        const camposValidos = isCamposValidos(nome, email, senha);
+
+        if(!camposValidos){
+            return res.status(400).json({ mensagem: "Todos os campos obrigatórios devem ser informados."})
         }
 
         const { rowCount } = await pool.query(`
@@ -46,11 +43,10 @@ const login = async (req, res) => {
     try{
         const { email, senha } = req.body;
 
-        if(!email){
-            return res.status(400).json({ mensagem: 'informe o email para o login!'});
-        }
-        if(!senha){
-            return res.status(400).json({ mensagem: 'informe a senha para o login!'});
+        const camposValidos = isCamposValidos(email, senha);
+
+        if(!camposValidos){
+            return res.status(400).json({ mensagem: "Todos os campos obrigatórios devem ser informados."})
         }
 
         const { rows, rowCount } = await pool.query(`
@@ -82,14 +78,10 @@ const atualizar = async (req, res) => {
     try{
         const { nome, email, senha } = req.body;
 
-        if(!nome){
-            return res.status(400).json({ mensagem: 'informe o nome para a alteração!'});
-        }
-        if(!email){
-            return res.status(400).json({ mensagem: 'informe o email para a alteração!'});
-        }
-        if(!senha){
-            return res.status(400).json({ mensagem: 'informe a senha para a alteração!'});
+        const camposValidos = isCamposValidos(nome, email, senha);
+
+        if(!camposValidos){
+            return res.status(400).json({ mensagem: "Todos os campos obrigatórios devem ser informados."})
         }
 
         const { rowCount } = await pool.query(`SELECT * FROM usuarios WHERE email = $1`, [email]);
