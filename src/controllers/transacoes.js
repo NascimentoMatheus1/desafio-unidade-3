@@ -3,16 +3,40 @@ const { isCamposValidos } = require('./validarCamposObrigatorios');
 
 const listar = async (req, res) => {
     try{
-        const { rows } = await pool.query(`
-            SELECT transacoes.id, tipo, transacoes.descricao, 
-            valor, data, usuario_id, categoria_id, 
-            categorias.descricao as "categoria_nome"
-            FROM transacoes INNER JOIN categorias 
-            ON transacoes.categoria_id = categorias.id 
-            and transacoes.usuario_id = $1;`
-            ,[req.usuario.id]);
+        let filtro = req.query.filtro;
         
-        res.status(200).json(rows);
+        if(!filtro){
+            const { rows } = await pool.query(`
+                SELECT transacoes.id, tipo, transacoes.descricao, 
+                valor, data, usuario_id, categoria_id, 
+                categorias.descricao as "categoria_nome"
+                FROM transacoes INNER JOIN categorias 
+                ON transacoes.categoria_id = categorias.id 
+                and transacoes.usuario_id = $1;`
+                ,[req.usuario.id]);
+        
+            return res.status(200).json(rows);
+        }      
+        
+        Array.isArray(filtro) ? filtro : filtro = [filtro];
+
+        let result = [];
+
+        for(const categoria of filtro){
+            const { rows } = await pool.query(`
+                SELECT transacoes.id, tipo, transacoes.descricao, 
+                valor, data, usuario_id, categoria_id, 
+                categorias.descricao as "categoria_nome"
+                FROM transacoes INNER JOIN categorias 
+                ON transacoes.categoria_id = categorias.id 
+                and transacoes.usuario_id = $1
+                and categorias.descricao = $2`
+                ,[req.usuario.id, categoria]);
+
+            result = result.concat(rows);
+        }
+
+        return res.status(200).json(result);
     }catch(error){
         console.log(error.message);
         return res.status(500).json({ mensagem: 'Falha no servidor!'});
