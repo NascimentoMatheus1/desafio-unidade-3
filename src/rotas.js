@@ -16,5 +16,6 @@ rotas.get('/categorias', categorias.listar);
 rotas.get('/transacao', transacoes.listar);
 rotas.post('/transacao', transacoes.cadastrar);
 rotas.put('/transacao/:id', transacoes.atualizar);
+rotas.delete('/transacao/:id', transacoes.deletar);
 
 module.exports = rotas;
