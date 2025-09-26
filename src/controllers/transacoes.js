@@ -136,9 +136,34 @@ const deletar = async (req, res) => {
         
 }
 
+const extrato = async (req, res) => {
+    try{
+        const { rows: extrato } = await pool.query(`
+            SELECT * FROM transacoes WHERE usuario_id = $1`
+            ,[req.usuario.id]);
+        
+        let entrada = 0;
+        let saida = 0;
+
+        for(const transacao of extrato){
+            if(transacao.tipo === 'entrada'){
+                entrada += transacao.valor;
+            }else{
+                saida += transacao.valor;
+            }
+        }
+
+        res.status(200).json({ entrada, saida });
+    }catch(error){
+        console.log(error.message);
+        return res.status(500).json({ mensagem: 'Falha no servidor!'});
+    }
+}
+
 module.exports = {
     listar,
     cadastrar,
     atualizar,
     deletar,
+    extrato,
 }

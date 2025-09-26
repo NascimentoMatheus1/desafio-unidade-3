@@ -17,5 +17,6 @@ rotas.get('/transacao', transacoes.listar);
 rotas.post('/transacao', transacoes.cadastrar);
 rotas.put('/transacao/:id', transacoes.atualizar);
 rotas.delete('/transacao/:id', transacoes.deletar);
+rotas.get('/transacao/extrato', transacoes.extrato);
 
 module.exports = rotas;
