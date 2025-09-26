@@ -3,8 +3,13 @@ const { isCamposValidos } = require('./validarCamposObrigatorios');
 
 const listar = async (req, res) => {
     try{
-        const {  rows } = await pool.query(`
-            SELECT * FROM transacoes WHERE usuario_id = $1`
+        const { rows } = await pool.query(`
+            SELECT transacoes.id, tipo, transacoes.descricao, 
+            valor, data, usuario_id, categoria_id, 
+            categorias.descricao as "categoria_nome"
+            FROM transacoes INNER JOIN categorias 
+            ON transacoes.categoria_id = categorias.id 
+            and transacoes.usuario_id = $1;`
             ,[req.usuario.id]);
         
         res.status(200).json(rows);
@@ -165,8 +170,13 @@ const detalhar = async (req, res) => {
         const { id } = req.params;
 
         const { rows, rowCount } = await pool.query(`
-            SELECT * FROM transacoes WHERE id = $1`
-            , [id]);
+            SELECT transacoes.id, tipo, transacoes.descricao, 
+            valor, data, usuario_id, categoria_id, 
+            categorias.descricao as "categoria_nome"
+            FROM transacoes INNER JOIN categorias 
+            ON transacoes.categoria_id = categorias.id 
+            and transacoes.id = $1;`
+            ,[id]);
 
         if(rowCount === 0){
             return res.status(404).json({ mensagem: "transação não encontrada!"});
