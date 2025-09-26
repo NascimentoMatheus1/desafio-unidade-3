@@ -160,10 +160,35 @@ const extrato = async (req, res) => {
     }
 }
 
+const detalhar = async (req, res) => {
+    try{
+        const { id } = req.params;
+
+        const { rows, rowCount } = await pool.query(`
+            SELECT * FROM transacoes WHERE id = $1`
+            , [id]);
+
+        if(rowCount === 0){
+            return res.status(404).json({ mensagem: "transação não encontrada!"});
+        }
+
+        if(rows[0].usuario_id !== req.usuario.id){
+            return res.status(401).json({ mensagem: "Não autorizado!"});
+        }
+
+        return res.status(200).json(rows[0]);
+    }catch(error){
+        console.log(error.message);
+        return res.status(500).json({ mensagem: 'Falha no servidor!'});
+    }
+        
+}
+
 module.exports = {
     listar,
     cadastrar,
     atualizar,
     deletar,
     extrato,
+    detalhar
 }
